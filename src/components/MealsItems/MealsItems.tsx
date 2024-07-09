@@ -11,7 +11,7 @@ interface Props {
 
 const MealsItems: React.FC<Props> = ({meals, deleting, onEdit, onDelete}) => {
   return meals &&  (
-    <div className='row'>
+    <div className='row py-3 justify-content-center'>
       {meals.map((meal) => (
         <MealItem
           key={meal.id}

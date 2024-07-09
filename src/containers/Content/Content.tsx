@@ -22,7 +22,7 @@ const Content = () => {
       const {data: ApiMeals} = await axiosApi.get<ApiMeals>('/meals.json');
 
       if (!ApiMeals) {
-        setMealsData([]);
+        return setMealsData([]);
       }
 
       const newMeals = Object.keys(ApiMeals).map((id) => ({
@@ -68,13 +68,15 @@ const Content = () => {
   return (
     <>
       {mealsLoading && <Spinner />}
-      <h1>Total calories: {getTotalCalories()}</h1>
-      <MealsItems
-        meals={mealsData}
-        onEdit={editMeal}
-        onDelete={deleteMeal}
-        deleting={deleting}
-      />
+      <h1 className="text-primary-emphasis fw-normal">Total calories: <strong>{getTotalCalories()} kcal</strong></h1>
+      {mealsData.length > 0 ? (
+        <MealsItems
+          meals={mealsData}
+          onEdit={editMeal}
+          onDelete={deleteMeal}
+          deleting={deleting}
+        />
+      ) : <h2 className="text-center">Empty</h2>}
     </>
   );
 };
