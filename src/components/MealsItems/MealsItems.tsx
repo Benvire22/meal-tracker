@@ -3,14 +3,14 @@ import {Meal} from '../../types';
 import MealItem from './MealItem';
 
 interface Props {
-  meals?: Meal[];
+  meals: Meal[];
   deleting: boolean;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
 const MealsItems: React.FC<Props> = ({meals, deleting, onEdit, onDelete}) => {
-  return meals &&  (
+  return (
     <div className='row py-3 justify-content-center'>
       {meals.map((meal) => (
         <MealItem

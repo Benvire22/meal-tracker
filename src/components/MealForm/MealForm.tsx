@@ -31,7 +31,7 @@ const MealForm: React.FC<Props> = ({onSubmit, isLoading, existingMeal}) => {
     setFormData({...formData, [e.target.name]: e.target.value});
   };
 
-  const sendForm = async (e: React.FormEvent) => {
+  const sendForm = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
   };
@@ -39,7 +39,7 @@ const MealForm: React.FC<Props> = ({onSubmit, isLoading, existingMeal}) => {
   return (
     <>
       <div className="row px-5 fs-5">
-        <h3 className="text-warning text-center fs-1 mb-5">Add / Edit meal</h3>
+        <h3 className="text-primary-emphasis text-center fs-1 mb-5">Add / Edit meal</h3>
         <div className="row mt-2 justify-content-center">
           <div className="col-10 text-primary-emphasis">
             <form onSubmit={sendForm}>
@@ -69,6 +69,7 @@ const MealForm: React.FC<Props> = ({onSubmit, isLoading, existingMeal}) => {
                   id="description"
                   name="description"
                   className="form-control border-primary fs-5 mb-3 py-2"
+                  placeholder="Enter meal"
                   onChange={changeForm}
                   required
                 />
@@ -82,7 +83,7 @@ const MealForm: React.FC<Props> = ({onSubmit, isLoading, existingMeal}) => {
                   name="kcal"
                   min="1"
                   className="form-control border-primary fs-5 mb-4 py-2"
-                  placeholder="Colories"
+                  placeholder="Calories"
                   onChange={changeForm}
                   required
                 />

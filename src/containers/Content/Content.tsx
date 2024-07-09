@@ -14,21 +14,21 @@ interface ApiMeals {
 
 const Content = () => {
   const [mealsData, setMealsData] = useState<Meal[]>([]);
-  const [mealsLoading, setMealsLoading] = useState(false);
+  const [mealsLoading, setMealsLoading] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const apiRequest = useCallback(async () => {
+  const fetchMeals = useCallback(async () => {
     try {
       setMealsLoading(true);
-      const {data: ApiMeals} = await axiosApi.get<ApiMeals>('/meals.json');
+      const {data: apiMealsData} = await axiosApi.get<ApiMeals | null>('/meals.json');
 
-      if (!ApiMeals) {
+      if (!apiMealsData) {
         return setMealsData([]);
       }
 
-      const newMeals = Object.keys(ApiMeals).map((id) => ({
-        ...ApiMeals[id],
+      const newMeals = Object.keys(apiMealsData).map((id) => ({
+        ...apiMealsData[id],
         id: id,
       }));
       setMealsData(newMeals);
@@ -41,15 +41,16 @@ const Content = () => {
   }, []);
 
   useEffect(() => {
-    void apiRequest();
-  }, [apiRequest]);
+    void fetchMeals();
+  }, [fetchMeals]);
 
   const deleteMeal = async (id: string) => {
     try {
       setDeleting(true);
       await axiosApi.delete(`/meals/${id}.json`);
-      await apiRequest();
+      await fetchMeals();
       toast.success('Meal was deleted!');
+
     } catch (e) {
       handleError(e as Error, 'Error deleting meal!');
     } finally {
@@ -69,8 +70,10 @@ const Content = () => {
 
   return (
     <>
-      {mealsLoading && <Spinner />}
-      <h1 className="text-primary-emphasis fw-normal">Total calories: <strong>{getTotalCalories()} kcal</strong></h1>
+      {mealsLoading && <Spinner/>}
+      <h1 className="text-primary-emphasis my-3 pb-3 border-bottom border-primary-subtle fw-normal">
+        Total calories: <strong>{getTotalCalories()} kcal</strong>
+      </h1>
       {mealsData.length > 0 ? (
         <MealsItems
           meals={mealsData}
@@ -78,7 +81,9 @@ const Content = () => {
           onDelete={deleteMeal}
           deleting={deleting}
         />
-      ) : <h2 className="text-center">Empty</h2>}
+      ) : (
+        <h2 className="text-center text-secondary mt-5">Empty... Add new Meal</h2>
+      )}
     </>
   );
 };

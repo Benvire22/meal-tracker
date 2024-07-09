@@ -5,7 +5,7 @@ import 'bootstrap-icons/font/bootstrap-icons.min.css';
 
 interface Props {
   meal: Meal;
-  deleting?: boolean;
+  deleting: boolean;
   onDelete: VoidFunction;
   onEdit: VoidFunction;
 }
@@ -13,7 +13,8 @@ interface Props {
 const MealItem: React.FC<Props> = ({meal, deleting = false, onDelete, onEdit}) => {
   return (
     <div
-      className="d-flex col-10 border border-2 border-primary-subtle text-primary-emphasis p-4 mb-4 rounded fs-4 align-items-center">
+      className="d-flex col-10 border border-2 border-primary-subtle text-primary-emphasis p-4 mb-4 rounded fs-4 align-items-center"
+    >
       <div className="me-auto">
         <h3 className="text-secondary fs-2">{meal.category}</h3>
         <span>{meal.description}</span>

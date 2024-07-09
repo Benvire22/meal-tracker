@@ -10,8 +10,8 @@ import handleError from '../../lib/handleError';
 
 const NewMeal = () => {
   const [loading, setLoading] = useState(false);
-  const [existingMeal, setExistingMeal] = useState<MealMutation | null>(null);
   const [loadingMeal, setLoadingMeal] = useState(false);
+  const [existingMeal, setExistingMeal] = useState<MealMutation | null>(null);
   const {id} = useParams();
   const navigate = useNavigate();
 
@@ -19,13 +19,16 @@ const NewMeal = () => {
     try {
       setLoadingMeal(true);
       if (id) {
-        const {data: apiMeal} = await axiosApi.get<ApiMeal>(`/meals/${id}.json`);
+        const {data: apiMealData} = await axiosApi.get<ApiMeal | null>(`/meals/${id}.json`);
 
-        setExistingMeal({
-          category: apiMeal.category,
-          description: apiMeal.description,
-          kcal: apiMeal.kcal.toString()
-        });
+        if (apiMealData) {
+          setExistingMeal({
+            category: apiMealData.category,
+            description: apiMealData.description,
+            kcal: apiMealData.kcal.toString()
+          });
+        }
+
       }
     } catch (e) {
       handleError(e as Error, 'Cannot loading current meal!');
@@ -37,7 +40,6 @@ const NewMeal = () => {
   useEffect(() => {
     void fetchMeal();
   }, [fetchMeal]);
-
 
   const sendForm = async (data: MealMutation) => {
     try {
