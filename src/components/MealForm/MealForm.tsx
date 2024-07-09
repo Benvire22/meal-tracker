@@ -8,14 +8,9 @@ const initialState: MealMutation = {
   kcal: '',
 };
 
-interface Props {
-  meal: MealMutation;
-}
-
-const MealForm: React.FC<Props> = () => {
+const MealForm: React.FC = () => {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
-
 
   const changeForm = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,7 +37,6 @@ const MealForm: React.FC<Props> = () => {
     }
 
   };
-
 
   return (
     <>
