@@ -3,6 +3,7 @@ import {ApiMeal, Meal} from '../../types';
 import axiosApi from '../../axiosApi';
 import {useNavigate} from 'react-router-dom';
 import MealsItems from '../../components/MealsItems/MealsItems';
+import Spinner from '../../components/Spinner/Spinner';
 
 interface ApiMeals {
   [key: string]: ApiMeal;
@@ -11,6 +12,7 @@ interface ApiMeals {
 const Content = () => {
   const [mealsData, setMealsData] = useState<Meal[]>([]);
   const [mealsLoading, setMealsLoading] = useState(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const apiRequest = useCallback(async () => {
@@ -42,22 +44,38 @@ const Content = () => {
   }, [apiRequest]);
 
   const deleteMeal = async (id: string) => {
-    await axiosApi.delete(`/meals/${id}.json`);
-    await apiRequest();
+    try {
+      setDeleting(true);
+      await axiosApi.delete(`/meals/${id}.json`);
+      await apiRequest();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const editMeal = async (id: string) => {
     navigate('/edit-meal/' + id);
   };
 
+  const getTotalCalories = () => {
+    return mealsData.reduce((sum, meal) => {
+      return sum += meal.kcal;
+    }, 0);
+  };
+
   return (
-    <div>
+    <>
+      {mealsLoading && <Spinner />}
+      <h1>Total calories: {getTotalCalories()}</h1>
       <MealsItems
         meals={mealsData}
         onEdit={editMeal}
         onDelete={deleteMeal}
+        deleting={deleting}
       />
-    </div>
+    </>
   );
 };
 

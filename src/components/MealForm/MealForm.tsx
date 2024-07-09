@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {ApiMeal, MealMutation} from '../../types';
-import axiosApi from '../../axiosApi';
-import {useParams} from 'react-router-dom';
+import {MealMutation} from '../../types';
+import ButtonSpinner from '../Spinner/ButtonSpinner';
 
 const initialState: MealMutation = {
   category: '',
@@ -9,55 +8,32 @@ const initialState: MealMutation = {
   kcal: '',
 };
 
-const MealForm: React.FC = () => {
-  const [formData, setFormData] = useState(initialState);
-  const [loading, setLoading] = useState(false);
-  const {id} = useParams();
+interface Props {
+  onSubmit: (meal: MealMutation) => void;
+  isLoading: boolean;
+  existingMeal: MealMutation | null;
+}
 
-  const request = useCallback(async () => {
-    if (id) {
-      const {data: apiMeal} = await axiosApi.get(`/meals/${id}.json`);
+const MealForm: React.FC<Props> = ({onSubmit, isLoading, existingMeal}) => {
+  const [formData, setFormData] = useState(existingMeal || initialState);
 
-      setFormData({
-        category: apiMeal.category,
-        description: apiMeal.description,
-        kcal: apiMeal.kcal.toString()
-      });
+  const getExistingMeal = useCallback(async () => {
+    if (existingMeal) {
+      setFormData(existingMeal);
     }
-  }, [id]);
+  }, [existingMeal]);
 
   useEffect(() => {
-    void request();
-  }, [request]);
+    void getExistingMeal();
+  }, [getExistingMeal]);
 
   const changeForm = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({...formData, [e.target.name]: e.target.value});
   };
 
   const sendForm = async (e: React.FormEvent) => {
-    try {
-      e.preventDefault();
-      setLoading(true);
-
-      const meal: ApiMeal = {
-        category: formData.category,
-        description: formData.description,
-        kcal: parseInt(formData.kcal),
-      };
-
-      if (id) {
-        await axiosApi.put(`/meals/${id}.json`, meal);
-      } else {
-        await axiosApi.post('/meals.json', meal);
-      }
-
-    } catch (e) {
-      console.error(e);
-
-    } finally {
-      setLoading(false);
-    }
-
+    e.preventDefault();
+    onSubmit(formData);
   };
 
   return (
@@ -111,7 +87,8 @@ const MealForm: React.FC = () => {
                   required
                 />
               </div>
-              <button type="submit" className="btn btn-warning text-white fs-4 px-4 py-2 mb-3" disabled={loading}>
+              <button type="submit" className="btn btn-warning text-white fs-4 px-4 py-2 mb-3" disabled={isLoading}>
+                {isLoading && <ButtonSpinner />}
                 save
               </button>
             </form>
