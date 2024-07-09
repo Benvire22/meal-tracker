@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {ApiMeal, MealMutation} from '../../types';
 import axiosApi from '../../axiosApi';
+import {useParams} from 'react-router-dom';
 
 const initialState: MealMutation = {
   category: '',
@@ -11,6 +12,23 @@ const initialState: MealMutation = {
 const MealForm: React.FC = () => {
   const [formData, setFormData] = useState(initialState);
   const [loading, setLoading] = useState(false);
+  const {id} = useParams();
+
+  const request = useCallback(async () => {
+    if (id) {
+      const {data: apiMeal} = await axiosApi.get(`/meals/${id}.json`);
+
+      setFormData({
+        category: apiMeal.category,
+        description: apiMeal.description,
+        kcal: apiMeal.kcal.toString()
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    void request();
+  }, [request]);
 
   const changeForm = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,7 +37,7 @@ const MealForm: React.FC = () => {
   const sendForm = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
-      setLoading(false);
+      setLoading(true);
 
       const meal: ApiMeal = {
         category: formData.category,
@@ -27,7 +45,11 @@ const MealForm: React.FC = () => {
         kcal: parseInt(formData.kcal),
       };
 
-      await axiosApi.post('/meals.json', meal);
+      if (id) {
+        await axiosApi.put(`/meals/${id}.json`, meal);
+      } else {
+        await axiosApi.post('/meals.json', meal);
+      }
 
     } catch (e) {
       console.error(e);
