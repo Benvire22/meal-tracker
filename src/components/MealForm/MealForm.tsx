@@ -15,7 +15,7 @@ interface Props {
 }
 
 const MealForm: React.FC<Props> = ({onSubmit, isLoading, existingMeal}) => {
-  const [formData, setFormData] = useState(existingMeal || initialState);
+  const [formData, setFormData] = useState(initialState);
 
   const getExistingMeal = useCallback(async () => {
     if (existingMeal) {

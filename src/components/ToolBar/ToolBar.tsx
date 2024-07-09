@@ -5,7 +5,7 @@ const ToolBar = () => {
     <>
       <nav className="navbar py-3 navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div className="container-xl">
-          <NavLink to="/content" className="navbar-brand fst-italic fs-2">BRAND</NavLink>
+          <NavLink to="/" className="navbar-brand fst-italic fs-2">Meal Tracker</NavLink>
           <button
             className="navbar-toggler"
             type="button" data-bs-toggle="collapse"
@@ -21,7 +21,7 @@ const ToolBar = () => {
                 <NavLink to="/" className="nav-link" aria-current="page">Home</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink to="/new-meal" className="nav-link">New Meal</NavLink>
+                <NavLink to="/new-meal" className="nav-link">Add Meal</NavLink>
               </li>
             </ul>
           </div>

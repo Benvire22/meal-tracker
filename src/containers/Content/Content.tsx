@@ -4,6 +4,9 @@ import axiosApi from '../../axiosApi';
 import {useNavigate} from 'react-router-dom';
 import MealsItems from '../../components/MealsItems/MealsItems';
 import Spinner from '../../components/Spinner/Spinner';
+import {toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import handleError from '../../lib/handleError';
 
 interface ApiMeals {
   [key: string]: ApiMeal;
@@ -18,7 +21,6 @@ const Content = () => {
   const apiRequest = useCallback(async () => {
     try {
       setMealsLoading(true);
-
       const {data: ApiMeals} = await axiosApi.get<ApiMeals>('/meals.json');
 
       if (!ApiMeals) {
@@ -29,11 +31,10 @@ const Content = () => {
         ...ApiMeals[id],
         id: id,
       }));
-
       setMealsData(newMeals);
 
     } catch (e) {
-      console.error(e);
+      handleError(e as Error, 'Cannot load meals!');
     } finally {
       setMealsLoading(false);
     }
@@ -48,8 +49,9 @@ const Content = () => {
       setDeleting(true);
       await axiosApi.delete(`/meals/${id}.json`);
       await apiRequest();
+      toast.success('Meal was deleted!');
     } catch (e) {
-      console.error(e);
+      handleError(e as Error, 'Error deleting meal!');
     } finally {
       setDeleting(false);
     }
